@@ -37,8 +37,9 @@ jobs:
         run: ls -la
       - name: Clone main docs repository
         run: |
-          git clone https://github.com/munirmardinli-dev/docs.git .
-          ls -la
+          git clone https://github.com/munirmardinli-dev/docs.git docs-app
+          ls -la docs-app
+          cd docs-app
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -67,7 +68,16 @@ jobs:
           echo "NEXT_PUBLIC_HEADER_TITEL=$NEXT_PUBLIC_HEADER_TITEL" >> .env.production
           echo "NEXT_PUBLIC_GIT_REPO_URL=$NEXT_PUBLIC_GIT_REPO_URL" >> .env.production
           cat .env.production
-          
+
+      - name: Copy MDX files from docs folder to Next.js app
+        run: |
+          cd ../
+          ls -la
+          # Kopiere alle MDX Dateien aus dem docs Ordner
+          cp -r docs/**/*.mdx docs-app/src/app/ || true
+          ls -la
+          cd docs-app
+
       - name: Run build
         run: npm run build
         env:
