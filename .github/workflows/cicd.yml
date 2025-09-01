@@ -41,10 +41,7 @@ jobs:
         run: |
           git clone https://github.com/munirmardinli-dev/docs.git docs-app
           ls -la docs-app/
-      
-      - name: Change to docs-app directory
-        run: cd docs-app
-        working-directory: docs-app
+          ls -la
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
