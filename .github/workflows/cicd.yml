@@ -32,16 +32,9 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0
-      
-      - name: List initial directory contents
-        run: ls -la
-      
+          fetch-depth: 0      
       - name: Clone main docs repository
-        run: |
-          git clone https://github.com/munirmardinli-dev/docs.git docs-app
-          ls -la docs-app/
-          ls -la
+        run: git clone https://github.com/munirmardinli-dev/docs.git docs-app
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -78,9 +71,12 @@ jobs:
 
       - name: Copy MDX files from docs folder to Next.js app
         run: |
-          # Kopiere alle MDX Dateien aus dem docs Ordner
-          cp -r docs/**/*.mdx docs-app/src/app/ || true
+          # Kopiere alle Dateien und Unterordner aus dem docs Ordner
+          cp -r docs/* docs-app/src/app/ || true
+          # Zeige den Inhalt des Zielverzeichnisses
           ls -la docs-app/src/app/
+          # Zeige auch die Struktur der docs Quelle
+          ls -la docs/
 
       - name: Run build
         run: npm run build
