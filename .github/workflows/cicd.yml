@@ -33,33 +33,38 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+      
       - name: List initial directory contents
         run: ls -la
+      
       - name: Clone main docs repository
         run: |
           git clone https://github.com/munirmardinli-dev/docs.git docs-app
-          ls -la docs-app
-          cd docs-app
-
+          ls -la docs-app/
+      
+      - name: Change to docs-app directory
+        run: cd docs-app
+        working-directory: docs-app
+      
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NPM_VERSION }}
           cache: npm
-          
+          cache-dependency-path: docs-app/package-lock.json
+      
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v4
         with:
-          path: |
-            node_modules
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          path: docs-app/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('docs-app/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-            
+      
       - name: Install dependencies
         run: npm ci
+        working-directory: docs-app
         
       - name: Production environment variables
         run: |
@@ -68,18 +73,22 @@ jobs:
           echo "NEXT_PUBLIC_HEADER_TITEL=$NEXT_PUBLIC_HEADER_TITEL" >> .env.production
           echo "NEXT_PUBLIC_GIT_REPO_URL=$NEXT_PUBLIC_GIT_REPO_URL" >> .env.production
           cat .env.production
+        working-directory: docs-app
+        env:
+          NEXT_PUBLIC_UI_URL: ${{ env.NEXT_PUBLIC_UI_URL }}
+          NEXT_PUBLIC_HEADER_TITEL: ${{ env.NEXT_PUBLIC_HEADER_TITEL }}
+          NEXT_PUBLIC_GIT_REPO_URL: ${{ env.NEXT_PUBLIC_GIT_REPO_URL }}
 
       - name: Copy MDX files from docs folder to Next.js app
         run: |
-          cd ../
-          ls -la
           # Kopiere alle MDX Dateien aus dem docs Ordner
-          cp -r docs/**/*.mdx docs-app/src/app/ || true
-          ls -la
-          cd docs-app
+          cp -r ../docs/*.mdx src/app/ || true
+          ls -la src/app/
+        working-directory: docs-app
 
       - name: Run build
         run: npm run build
+        working-directory: docs-app
         env:
           NODE_ENV: production
           NEXT_PUBLIC_UI_URL: ${{ env.NEXT_PUBLIC_UI_URL }}
