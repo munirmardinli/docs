@@ -31,9 +31,10 @@ jobs:
     steps:
       - name: Clone main docs repository
         run: |
+          ls -la
           git clone https://github.com/munirmardinli-dev/docs.git .
           ls -la
-          
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
