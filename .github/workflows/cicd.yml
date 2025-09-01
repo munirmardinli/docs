@@ -79,9 +79,8 @@ jobs:
       - name: Copy MDX files from docs folder to Next.js app
         run: |
           # Kopiere alle MDX Dateien aus dem docs Ordner
-          cp -r ../docs/*.mdx src/app/ || true
-          ls -la src/app/
-        working-directory: docs-app
+          cp -r docs/**/*.mdx docs-app/src/app/ || true
+          ls -la docs-app/src/app/
 
       - name: Run build
         run: npm run build
