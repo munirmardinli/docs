@@ -29,6 +29,10 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - name: List initial directory contents
         run: ls -la
       - name: Clone main docs repository
