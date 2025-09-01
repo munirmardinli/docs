@@ -29,9 +29,10 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
+      - name: List initial directory contents
+        run: ls -la
       - name: Clone main docs repository
         run: |
-          ls -la
           git clone https://github.com/munirmardinli-dev/docs.git .
           ls -la
 
