@@ -29,33 +29,31 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone GitHub Repository
+      - name: Clone main docs repository
         run: |
           git clone https://github.com/munirmardinli-dev/docs.git .
           ls -la
-      - uses: actions/checkout@v5
+          
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NPM_VERSION }}
           cache: npm
+          
       - name: Cache node modules
         id: cache-node-modules
         uses: actions/cache@v4
         with:
           path: |
             node_modules
-            .npm
-            .npmrc
+            ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
+          restore-keys: |
+            ${{ runner.os }}-node-
+            
       - name: Install dependencies
         run: npm ci
-      - name: Copy MDX Files
-        run: |
-          ls -la ./docs
-          ls -la ./docs/**/*.mdx
-          cp -r ./docs/**/*.mdx src/app/ || true
+        
       - name: Production environment variables
         run: |
           echo "NODE_ENV=production" > .env.production
@@ -63,9 +61,9 @@ jobs:
           echo "NEXT_PUBLIC_HEADER_TITEL=$NEXT_PUBLIC_HEADER_TITEL" >> .env.production
           echo "NEXT_PUBLIC_GIT_REPO_URL=$NEXT_PUBLIC_GIT_REPO_URL" >> .env.production
           cat .env.production
+          
       - name: Run build
-        run: |
-          npm run build
+        run: npm run build
         env:
           NODE_ENV: production
           NEXT_PUBLIC_UI_URL: ${{ env.NEXT_PUBLIC_UI_URL }}
