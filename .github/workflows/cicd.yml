@@ -10,30 +10,30 @@ on:
 
 permissions:
   contents: write
-  packages: write
-  issues: write
-  pull-requests: write
   pages: write
   id-token: write
+  packages: write
   actions: write
 
 env:
   NPM_VERSION: '22'
-  NEXT_PUBLIC_UI_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+  DOCKER_REGISTRY: 'ghcr.io'
+  REPO_NAME: ${{ github.event.repository.name }}
+  NEXT_PUBLIC_UI_URL: http://localhost:3000
   NEXT_PUBLIC_HEADER_TITEL: Docs Management
-  NEXT_PUBLIC_GIT_REPO_URL: https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}
-  DOCKER_REGISTRY: ghcr.io
-  DOCKER_IMAGE_NAME: ${{ github.event.repository.name }}
+  NEXT_PUBLIC_GIT_REPO_URL: https://github.com/munirmardinli/docs
+  DOCKER_IMAGE_NAME: ${{ github.repository }}/docs
   IMAGE_TAG: latest
 
 jobs:
-  prepare:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: 0      
+          fetch-depth: 0
+      
       - name: Clone main docs repository
         run: git clone https://github.com/munirmardinli-dev/docs.git docs-app
       
@@ -66,13 +66,16 @@ jobs:
           cat .env.production
         working-directory: docs-app
         env:
-          NODE_ENV: production
           NEXT_PUBLIC_UI_URL: ${{ env.NEXT_PUBLIC_UI_URL }}
           NEXT_PUBLIC_HEADER_TITEL: ${{ env.NEXT_PUBLIC_HEADER_TITEL }}
           NEXT_PUBLIC_GIT_REPO_URL: ${{ env.NEXT_PUBLIC_GIT_REPO_URL }}
 
       - name: Copy MDX files from docs folder to Next.js app
         run: cp -r docs/* docs-app/src/app/ || true
+    
+      - name: Delete .env.local
+        working-directory: docs-app
+        run: rm .env.local
 
       - name: Run build
         run: npm run build
