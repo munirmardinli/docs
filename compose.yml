@@ -1,0 +1,15 @@
+---
+services:
+  docs-development:
+    image: ghcr.io/munirmardinli/docs:latest
+    container_name: docs-development
+    hostname: docs-development
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      dockerization:
+
+networks:
+ dockerization:
+  external: true
