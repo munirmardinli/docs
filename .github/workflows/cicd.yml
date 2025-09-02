@@ -24,6 +24,7 @@ env:
   NEXT_PUBLIC_UI_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
   NEXT_PUBLIC_HEADER_TITEL: Docs Management
   NEXT_PUBLIC_GIT_REPO_URL: https://github.com/munirmardinli/docs
+  DEPLOY_BRANCH: gh-pages
 
 jobs:
   prepare:
@@ -61,7 +62,7 @@ jobs:
           echo "NODE_ENV=production" > .env.production
           echo "NEXT_PUBLIC_UI_URL=$NEXT_PUBLIC_UI_URL" >> .env.production
           echo "NEXT_PUBLIC_HEADER_TITEL=$NEXT_PUBLIC_HEADER_TITEL" >> .env.production
-          echo "NEXT_PUBLIC_GIT_REPO_URL=$NEXT_PUBLIC_GIT_REPO_URL" >> .env.production
+          echo "NEXT_PUBLIC_GIT_REPO_URL=$NEXT_PUBLIC_GIT_REPO_URL" >> .env.proproduction
           cat .env.production
         working-directory: docs-app
         env:
@@ -81,9 +82,66 @@ jobs:
           NEXT_PUBLIC_HEADER_TITEL: ${{ env.NEXT_PUBLIC_HEADER_TITEL }}
           NEXT_PUBLIC_GIT_REPO_URL: ${{ env.NEXT_PUBLIC_GIT_REPO_URL }}
 
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs-app/out
-          publish_branch: gh-pages
+          path: docs-app/out
+
+  deploy:
+    needs: prepare
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: pages-artifact
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-gh-pages:
+    needs: prepare
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.DEPLOY_BRANCH }}
+          fetch-depth: 0
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-artifact
+          path: ./temp-build
+
+      - name: Clear existing files (except .git)
+        run: |
+          # Behalte .git Verzeichnis bei, lösche alles andere
+          shopt -s dotglob
+          find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +
+          shopt -u dotglob
+
+      - name: Copy new build files
+        run: cp -r temp-build/* ./
+
+      - name: Clean up temp directory
+        run: rm -rf temp-build
+
+      - name: Commit and push to gh-pages
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Deploy to GitHub Pages from main @ ${{ github.sha }}"
+          git push origin ${{ env.DEPLOY_BRANCH }}
