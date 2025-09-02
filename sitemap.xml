@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://munirmardinli.github.io/docs/homelab/management/page</loc>
+<lastmod>2025-09-02T07:26:29.638Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://munirmardinli.github.io/docs/manifest</loc>
+<lastmod>2025-09-02T07:26:29.639Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://munirmardinli.github.io/docs/page</loc>
+<lastmod>2025-09-02T07:26:29.639Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://munirmardinli.github.io/docs/robots</loc>
+<lastmod>2025-09-02T07:26:29.639Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://munirmardinli.github.io/docs/rss.xml/router</loc>
+<lastmod>2025-09-02T07:26:29.639Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+</urlset>

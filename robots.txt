@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /admin
+Disallow: /privacy
+Disallow: /user/*
+
+Host: https://munirmardinli.github.io/docs
+Sitemap: https://munirmardinli.github.io/docs/sitemap.xml
