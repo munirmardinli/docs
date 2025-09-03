@@ -6,6 +6,7 @@ description: >
   Complete Docker Compose setup for Watchtower, Autoheal, Dashy, Roundcube, and Guacamole.
   Includes container monitoring, auto-healing, and production-ready configuration
   with health checks, logging, and monitoring integration.
+sidebarTitle: Container Management
 ---
 
 <br />
@@ -209,7 +210,8 @@ docker-compose -f management.yml up -d
 ```bash copy showLineNumbers
 docker-compose -f management.yml pull && docker-compose -f management.yml up -d
 ```
-- **Logs**
+### 📄 Logs
+
 ```bash copy showLineNumbers
 docker-compose -f management.yml logs -f
 ```
