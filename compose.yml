@@ -1,14 +1,48 @@
 ---
+x-logging: &default-logging
+  driver: loki
+  options: &default-logging-options
+    loki-url: https://loki.${SYNOLOGY_BASIC_URL}/loki/api/v1/push
+    loki-retries: 5
+    loki-batch-size: 400
+    loki-batch-wait: 2s
+    loki-timeout: 10s
+    loki-max-backoff: 5s
+    loki-min-backoff: 1s
+    loki-tenant-id: default
+
+x-labels: &default-labels
+  com.centurylinklabs.watchtower.enable: true
+  recreat.container: true
+  container.label.group: docs
+
+x-limits: &resource-limits
+  mem_limit: 256m
+  mem_reservation: 64m
+  cpu_shares: "512"
+  restart: always
+  networks:
+    dockerization:
+
 services:
-  docs-development:
+  docs:
     image: ghcr.io/munirmardinli/docs:latest
-    container_name: docs-development
-    hostname: docs-development
+    container_name: docs
+    hostname: docs
+    <<: *resource-limits
+    logging:
+      <<: *default-logging
+      options:
+        <<: *default-logging-options
+        loki-external-labels: job=docs
     ports:
-      - 80:80
-    restart: always
-    networks:
-      dockerization:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    labels:
+      <<: *default-labels
+      monitoring: docs
 
 networks:
  dockerization:
